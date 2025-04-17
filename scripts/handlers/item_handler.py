@@ -1,8 +1,9 @@
 # handlers/item_handler.py
 from utils.database import fetch_items_from_db, insert_item_into_db, delete_item_from_db, login_user,get_all_pizzas_from_db, view_cart_details_from_db
-from scripts.models.item import Item, ItemCreate, LoginRequest
+from scripts.models.item import Item, ItemCreate, LoginRequest, CalculateTotalItem
 from utils.log_module import logger
 from typing import List, Union
+from decimal import Decimal
 
 def read_items_logic() -> Union[List[Item], dict]:
     logger.info("Reading items from DB")
@@ -62,3 +63,52 @@ def login_user_logic(request: LoginRequest) -> dict:
         }
     else:
         return {"error": "Invalid email or password."}
+
+from decimal import Decimal
+
+def calculate_total_logic(items: List[CalculateTotalItem]) -> dict:
+    try:
+        total_price = Decimal(0)  # Initialize total price as Decimal for accuracy
+        pizza_ids = [item.pizza_id for item in items]  # Access pizza_id using dot notation
+
+        # Fetch pizza details from the database
+        pizza_details = view_cart_details_from_db(pizza_ids)
+
+        if pizza_details["success"]:
+            pizzas = pizza_details["data"]
+
+            # Calculate the total price based on pizza quantity
+            for pizza in pizzas:
+                # Match the pizza based on pizza_id
+                matching_item = next((item for item in items if item.pizza_id == pizza["pizza_id"]), None)
+                if matching_item:
+                    # Convert price to Decimal before multiplying
+                    price = Decimal(pizza["price"])  # Convert float to Decimal
+                    total_price += price * matching_item.quantity  # Use dot notation for quantity
+
+            # Calculate tax (example: 7.5% of total)
+            tax_rate = Decimal(0.075)
+            tax = total_price * tax_rate
+
+            # Set fixed delivery fee and packaging charge
+            delivery_fee = Decimal(4.99)
+            packaging_charge = Decimal(30)
+
+            # Calculate grand total
+            grand_total = total_price + tax + delivery_fee + packaging_charge
+
+            return {
+                "success": True,
+                "data": {
+                    "subtotal": round(total_price, 2),
+                    "tax": round(tax, 2),
+                    "delivery_fee": round(delivery_fee, 2),
+                    "packaging_charge": round(packaging_charge, 2),
+                    "grand_total": round(grand_total, 2)
+                }
+            }
+        else:
+            return {"success": False, "error": "Failed to fetch pizza details from the database"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+

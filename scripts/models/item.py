@@ -17,3 +17,10 @@ class LoginRequest(BaseModel):
 
 class ViewCart(BaseModel):
     pizza_ids: List[int]
+
+class CalculateTotalItem(BaseModel):
+    pizza_id: int
+    quantity: int
+
+class CalculateTotalRequest(BaseModel):
+    items: List[CalculateTotalItem]

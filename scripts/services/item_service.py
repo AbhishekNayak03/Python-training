@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Path, Body
 from typing import List, Union
-from scripts.models.item import Item, ItemCreate, LoginRequest, ViewCart
+from scripts.models.item import Item, ItemCreate, LoginRequest, ViewCart, CalculateTotalRequest
 from scripts.handlers import item_handler
 
 router = APIRouter()
@@ -31,3 +31,7 @@ def get_all_pizzas():
 def view_cart(request: ViewCart):
     return item_handler.view_cart_logic(request.dict())
 
+@router.post("/calculate_total")
+def calculate_total(request: CalculateTotalRequest):
+    response = item_handler.calculate_total_logic(request.items)
+    return response
