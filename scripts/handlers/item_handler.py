@@ -91,8 +91,8 @@ def calculate_total_logic(items: List[CalculateTotalItem]) -> dict:
             tax = total_price * tax_rate
 
             # Set fixed delivery fee and packaging charge
-            delivery_fee = Decimal(4.99)
-            packaging_charge = Decimal(30)
+            delivery_fee = Decimal(30.99)
+            packaging_charge = Decimal(12)
 
             # Calculate grand total
             grand_total = total_price + tax + delivery_fee + packaging_charge
