@@ -2,6 +2,7 @@
 import psycopg2
 from psycopg2 import sql
 from typing import List, Dict, Any
+import base64
 
 # Database connection parameters
 DB_HOST = "localhost"
@@ -87,6 +88,9 @@ def delete_item_from_db(item_id: int) -> dict:
 
 def login_user(email: str, password: str) -> dict:
     try:
+        # Decode the base64-encoded password
+        decoded_password = base64.b64decode(password).decode('utf-8')
+
         conn = psycopg2.connect(
             host="localhost",
             dbname="postgres",
@@ -95,9 +99,9 @@ def login_user(email: str, password: str) -> dict:
         )
         cur = conn.cursor()
 
-        # Query to match email & password
+        # Query to match email & decoded password
         query = sql.SQL("SELECT id, name, email FROM users WHERE email = %s AND password = %s")
-        cur.execute(query, (email, password))
+        cur.execute(query, (email, decoded_password))
         user = cur.fetchone()
 
         cur.close()

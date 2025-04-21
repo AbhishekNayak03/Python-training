@@ -64,8 +64,6 @@ def login_user_logic(request: LoginRequest) -> dict:
     else:
         return {"error": "Invalid email or password."}
 
-from decimal import Decimal
-
 def calculate_total_logic(items: List[CalculateTotalItem]) -> dict:
     try:
         total_price = Decimal(0)  # Initialize total price as Decimal for accuracy
