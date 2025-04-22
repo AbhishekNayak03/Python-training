@@ -1,6 +1,6 @@
 class ErrorResponses:
     users: str = "Failed to list users"
-    create_item: str = "Failed to create item"
+    create_user: str = "Failed to create user"
     delete_item: str = "Failed to delete item"
     login_failed: str = "Login failed"
     pizzas_listing: str = "Failed to list pizzas"
@@ -9,7 +9,7 @@ class ErrorResponses:
 
 class SuccessResponse:
     users: str = "Successfully listed users"
-    create_item: str = "Successfully created item"
+    create_user: str = "Sign-up successful!"
     delete_item: str = "Successfully deleted item"
     login_success: str = "Login successful!"
     pizzas_listing: str = "Successfully listed all pizzas"

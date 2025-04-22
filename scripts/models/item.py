@@ -7,9 +7,10 @@ class Item(BaseModel):
     name: str
     email: str
 
-class ItemCreate(BaseModel):  # for POST request body
+class UserCreate(BaseModel):  # for POST request body
     name: str
     email: str
+    password: str
 
 class LoginRequest(BaseModel):
     email: str

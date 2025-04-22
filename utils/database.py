@@ -43,8 +43,16 @@ def fetch_items_from_db() -> List[Dict[str, Any]]:
     except Exception as e:
         return {"error": f"Error fetching items: {e}"}
 
-def insert_item_into_db(name: str, email: str) -> dict:
+
+def insert_user_into_db(name: str, email: str, password: str) -> dict:
     try:
+        # Encode the password to Base64 (since you want to store it that way)
+        encoded_password = base64.b64encode(password.encode('utf-8')).decode('utf-8')
+
+        # Log for debugging (be careful with logging sensitive data in production)
+        # logger.info(f"Encoded password for {name}: {encoded_password}")
+
+        # Connect to the database (consider using a connection pool in production)
         conn = psycopg2.connect(
             host="localhost",
             dbname="postgres",
@@ -52,14 +60,22 @@ def insert_item_into_db(name: str, email: str) -> dict:
             password="postgres"
         )
         cur = conn.cursor()
-        query = sql.SQL("INSERT INTO users (name, email) VALUES (%s, %s) RETURNING id")
-        cur.execute(query, (name, email))
+
+        # Insert user into the database (encoded password)
+        query = sql.SQL("INSERT INTO users (name, email, password) VALUES (%s, %s, %s) RETURNING id")
+        cur.execute(query, (name, email, encoded_password))
+
+        # Fetch the ID of the newly inserted user
         item_id = cur.fetchone()[0]
         conn.commit()
+
         cur.close()
         conn.close()
+
         return {"id": item_id, "name": name, "email": email}
+
     except Exception as e:
+        # logger.error(f"Error inserting user into database: {e}")
         return {"error": str(e)}
 
 def delete_item_from_db(item_id: int) -> dict:

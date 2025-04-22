@@ -1,6 +1,6 @@
 # handlers/item_handler.py
-from utils.database import fetch_items_from_db, insert_item_into_db, delete_item_from_db, login_user,get_all_pizzas_from_db, view_cart_details_from_db
-from scripts.models.item import Item, ItemCreate, LoginRequest, CalculateTotalItem
+from utils.database import fetch_items_from_db, insert_user_into_db, delete_item_from_db, login_user,get_all_pizzas_from_db, view_cart_details_from_db
+from scripts.models.item import Item, UserCreate, LoginRequest, CalculateTotalItem
 from utils.log_module import logger
 from typing import List, Union
 from decimal import Decimal
@@ -13,9 +13,10 @@ def read_items_logic() -> Union[List[Item], dict]:
     else:
         return {"error": "Failed to fetch items"}
 
-def create_item_logic(item: ItemCreate) -> dict:
-    logger.info(f"Creating item: {item}")
-    return insert_item_into_db(item.name, item.email)
+def create_user_logic(item: UserCreate, password: str) -> dict:
+    logger.info(f"Creating user: {item.name} with email: {item.email}")
+    # Pass the password as an argument here
+    return insert_user_into_db(item.name, item.email, password)
 
 def delete_item_logic(item_id: int) -> dict:
     logger.info(f"Deleting item with id: {item_id}")

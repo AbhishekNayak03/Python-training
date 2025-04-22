@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Path
 from typing import List, Union
-from scripts.models.item import Item, ItemCreate, LoginRequest, ViewCart, CalculateTotalRequest
+from scripts.models.item import Item, UserCreate, LoginRequest, ViewCart, CalculateTotalRequest
 from scripts.handlers import item_handler
 from app_constants.responses import ErrorResponses, SuccessResponse
 from app_constants.constants import CommonConstants
@@ -34,17 +34,19 @@ def read_items():
             CommonConstants.message: str(e)
         }
 
-@router.post("/items", response_model=dict)
-def create_item(item: ItemCreate):
+@router.post("/sign_up", response_model=dict)
+def create_user(item: UserCreate):
     try:
-        created_item = item_handler.create_item_logic(item)
+        logger.info(f"Received payload: {item}")
+        # Pass the password from the request body to create_user_logic
+        created_item = item_handler.create_user_logic(item, item.password)
         return {
             CommonConstants.status: CommonConstants.success,
             CommonConstants.data: created_item,
-            CommonConstants.message: SuccessResponse.create_item
+            CommonConstants.message: SuccessResponse.create_user
         }
     except Exception as e:
-        logger.exception(f"{ErrorResponses.create_item}: {e}")
+        logger.exception(f"{ErrorResponses.create_user}: {e}")
         return {
             CommonConstants.status: CommonConstants.fail,
             CommonConstants.message: str(e)
