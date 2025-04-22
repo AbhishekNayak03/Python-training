@@ -57,10 +57,7 @@ def login_user_logic(request: LoginRequest) -> dict:
         return {"error": user["error"]}
 
     if user:
-        return {
-            "message": "Login successful!",
-            "user": user
-        }
+        return {"user": user}  # Only return the user data, no message here
     else:
         return {"error": "Invalid email or password."}
 

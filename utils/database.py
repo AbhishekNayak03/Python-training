@@ -109,7 +109,6 @@ def login_user(email: str, password: str) -> dict:
 
         if user:
             return {
-                "message": "Login successful!",
                 "user": {
                     "id": user[0],
                     "name": user[1],
